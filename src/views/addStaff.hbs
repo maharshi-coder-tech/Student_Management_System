@@ -1,0 +1,119 @@
+<div class="container my-5">
+  <h1>Add/Edit Staff Details</h1>
+  <form id="teacher-form" class="my-5" action="{{action}}" method="{{method}}" _method="{{method}}">
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="firstName">First Name</label>
+        <input type="text" class="form-control" id="firstName" name="firstName" required value={{staff.firstName}}>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="lastName">Last Name</label>
+        <input type="text" class="form-control" id="lastName" name="lastName" value={{staff.lastName}}>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" class="form-control" id="email" name="email" required value={{staff.email}}>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-2">
+        <label for="age">Age</label>
+        <input type="text" class="form-control" id="age" name="age" required value={{staff.age}}>
+        <div class="invalid-feedback"> Age must be greater than 25 </div>
+      </div>
+      <div class="form-group col-md-1">
+      </div>
+      <div class="form-group col-md-2">
+        <label for="class">Class</label>
+        <input type="text" class="form-control" id="class" name="class" required value={{staff.class}}>
+      </div>
+      <div class="form-group col-md-1">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="student-gender">Gender</label>
+        <div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="gender" id="male" value="male"
+              {{#if (ifEquality staff.gender "male")}}checked{{/if}}>
+            <label class="form-check-label" for="male">Male</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="gender" id="female" value="female"
+              {{#if (ifEquality staff.gender "female")}}checked{{/if}}>
+            <label class="form-check-label" for="female">Female</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-warning btn-lg" onclick="validation(this)">Add Teacher</button>
+  </form>
+</div>
+
+<script>
+
+  const $addTeacherForm = document.querySelector('#teacher-form')
+
+  function validation() {
+    const age = document.getElementById("age")
+    ageValue = parseInt(age.value)
+    const divs = document.createElement("div")
+    if (ageValue < 25) {
+      $addTeacherForm.addEventListener("submit", event => {
+        event.preventDefault();
+      });
+      age.setAttribute("class", "form-control is-invalid")
+      return false;
+    }
+    else {
+      $addTeacherForm.addEventListener("submit", event => {
+        event.preventDefault();
+
+        age.setAttribute("class", "form-control")
+        const submitUrl = $addTeacherForm.action
+        const submitMethod = $addTeacherForm.getAttribute("_method");
+
+        const formData = new FormData($addTeacherForm);
+        let teacherDetail = {};
+        for (const fields of formData.entries()) {
+          const [key, value] = fields;
+          teacherDetail[key] = value;
+        }
+
+        const config = {
+          method: submitMethod.toUpperCase(),
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(teacherDetail)
+        }
+        console.log(config)
+        fetch(submitUrl, config)
+          .then(response => {
+            if (response.status === 200) {
+              return response.json()
+            } else {
+              throw (new Error(response.status))
+            }
+          }
+          )
+          .then(data => {
+            alert(data.message)
+            $addTeacherForm.reset();
+          })
+          .catch(error => {
+            switch (error.message) {
+              case "400":
+                alert("Please check form values...");
+                break;
+              case "500":
+                alert("Please Try after some time...");
+                break;
+              default:
+                console.error(error);
+            }
+          })
+
+      })
+    }
+  }
+</script>

@@ -1,0 +1,25 @@
+<div class="container my-5">
+  <h1>List of All Students</h1>
+  <table class="table my-5">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">First</th>
+        <th scope="col">Last</th>
+        <th scope="col">Age</th>
+        <th scope="col">Gender</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each data}}
+      <tr>
+        <th scope="row" class="text-light">{{this.id}}</th>
+        <td class="text-light">{{this.firstName}}</td>
+        <td class="text-light">{{this.lastName}}</td>
+        <td class="text-light">{{this.age}}</td>
+        <td class="text-light">{{this.gender}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table> <a class="btn btn-warning btn-lg" href="/">Go to Home Page</a>
+</div>

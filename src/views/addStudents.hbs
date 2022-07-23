@@ -1,0 +1,100 @@
+<div class="container my-5">
+  <h1>Add/Edit Student Details</h1>
+  <form id="student-form" class="my-5" action="{{action}}" method="{{method}}" _method="{{method}}">
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <label for="firstName">First Name</label>
+        <input type="text" class="form-control" id="firstName" name="firstName" required value={{data.firstName}}>
+      </div>
+      <div class="form-group col-md-6">
+        <label for="lastName">Last Name</label>
+        <input type="text" class="form-control" id="lastName" name="lastName" value={{data.lastName}}>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" class="form-control" id="email" name="email" required value={{data.email}}>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-2">
+        <label for="age">Age</label>
+        <input type="text" class="form-control" id="age" name="age" required value={{data.age}}>
+      </div>
+      <div class="form-group col-md-1">
+      </div>
+      <div class="form-group col-md-1">
+      </div>
+      <div class="form-group col-md-6">
+        <label for="student-gender">Gender</label>
+        <div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="gender" id="male" value="male"
+              {{#if (ifEquality data.gender "male")}}checked{{/if}}>
+            <label class="form-check-label" for="male">Male</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="gender" id="female" value="female"
+              {{#if (ifEquality data.gender "female")}}checked{{/if}}>
+            <label class="form-check-label" for="female">Female</label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-md-2">
+      </div>
+    </div>
+    <button type="submit" class="btn btn-warning btn-lg">Add Student</button>
+  </form>
+</div>
+
+
+<script>
+  const $addStudentForm = document.querySelector("#student-form");
+
+  $addStudentForm.addEventListener("submit", event => {
+    event.preventDefault();
+
+    const submitUrl = $addStudentForm.action;
+    const submitMethod = $addStudentForm.getAttribute("_method");
+    const formData = new FormData($addStudentForm);
+    let studentDetail = {};
+    for (const fields of formData.entries()) {
+      const [key, value] = fields;
+      studentDetail[key] = value;
+    }
+
+    const config = {
+      method: submitMethod.toUpperCase(),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(studentDetail)
+    }
+
+    console.log(config)
+    fetch(submitUrl, config)
+      .then(response => {
+        if (response.status === 200) {
+          return response.json()
+        } else {
+          throw (new Error(response.status))
+        }
+      }
+      )
+      .then(data => {
+        alert(data.message)
+        $addStudentForm.reset();
+      })
+      .catch(error => {
+        switch (error.message) {
+          case "400":
+            alert("Please check form values...");
+            break;
+          case "500":
+            alert("Please Try after some time...");
+            break;
+          default:
+            console.error(error);
+        }
+      })
+  });
+</script>
